@@ -1,9 +1,13 @@
-import { DeleteFlagFnType, DeleteFnType, MIN_WINDOW_WIDTH } from  '../common/Constants'
+import { DeleteFlagFnType, DeleteFnType, HEADERS, MIN_WINDOW_WIDTH, URL_INTERACTIVE_COMMENT_ENGINE, currentUser } from  '../common/constants'
 import { Button, Modal } from 'react-bootstrap'
 import { useWindowSize } from '../hooks/useWindowSize'
+import axios from 'axios';
+import Logger from '@vernglobe/logger';
+
+const logger = new Logger("DeleteModal");
 
 type DeleteModalType = {
-  id?: number
+  id: number
   isShowDeleteModal?:boolean
   setDeleting: DeleteFlagFnType
   deleteComment: DeleteFnType
@@ -15,7 +19,7 @@ const DeleteModal = ({id, isShowDeleteModal, setDeleting, deleteComment } : Dele
     setDeleting(false);
   };
 
-  const initDelete = () => {
+  const initDelete = async() => {
     deleteComment();
   };
 

@@ -1,5 +1,5 @@
 import CommentBtn from "./CommentBtn";
-import {CommentGroupType, DeleteFlagFnType, EditFlagFnType, ReplyFnType, UserType } from "../common/Constants";
+import {CommentGroupType, DeleteFlagFnType, EditFlagFnType, ReplyFnType, UserType } from "../common/constants";
 
 type CommentHeaderType = {
   commentData: CommentGroupType, 
@@ -13,7 +13,7 @@ const CommentHeader = ({commentData, setReplying, setDeleting, setEditing, time}
   return (
     <div className="comment--header">
       <img alt={commentData.user?.username} src={commentData.user?.image?.png} width="50px" height="50px"/>
-      <div className="username">{commentData.username}</div>
+      <div className="username">{commentData.user?.username}</div>
       {commentData.currentUser ? <div className="you-tag">YOU</div> : ""}
       <div className="comment-posted-time">{`${time} ago`}</div>
       <CommentBtn

@@ -1,34 +1,34 @@
 import { useState } from "react";
 import "./Styles/AddComment.scss";
-import { MIN_WINDOW_WIDTH, UserType } from "../common/Constants";
+import { CommentGroupType, HEADERS, MIN_WINDOW_WIDTH, URL_INTERACTIVE_COMMENT_ENGINE, UserType, currentUser } from "../common/constants";
 import { useWindowSize } from "../hooks/useWindowSize";
+import axios from 'axios';
 
 type AddCommentType = {
-  currentUser?: UserType
   buttonValue: string
   addComments: any
   replyingTo?: string
 }
-const AddComment = ({ currentUser, buttonValue, addComments, replyingTo }: AddCommentType) => {
+
+const AddComment = ({ buttonValue, addComments, replyingTo }: AddCommentType) => {
   const replyingToUser = replyingTo ? `@${replyingTo}, ` : "";
   const [comment, setComment] = useState("");
   const windowSize = useWindowSize()
-  const clickHandler = () => {
+  const clickHandler = async () => {
     if (comment === "" || comment === " ") return;
-    const newComment = {
+    const newComment: CommentGroupType = {
       id: Math.floor(Math.random() * 100) + 5,
       content: replyingToUser + comment,
       user: currentUser,
       currentUser: true,
-      createdAt: new Date(),
+      createdAt: String(new Date()),
       score: 0,
       replies: [],
     };
-
     addComments(newComment);
     setComment("");
   };
-  
+
   return (
     <div className="add-comment">
       { windowSize.width >=  MIN_WINDOW_WIDTH?

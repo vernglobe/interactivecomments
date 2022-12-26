@@ -1,7 +1,7 @@
 import { ReactComponent as IconReply } from "../images/icons/icon-reply.svg";
 import { ReactComponent as IconDelete } from "../images/icons/icon-delete.svg";
 import { ReactComponent as IconEdit } from "../images/icons/icon-edit.svg";
-import { CommentType, DeleteFlagFnType, EditFlagFnType, ReplyFnType } from  '../common/Constants'
+import { CommentType, DeleteFlagFnType, EditFlagFnType, ReplyFnType } from  '../common/constants'
 
 type CommentBtnType = {
   commentData: CommentType

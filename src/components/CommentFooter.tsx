@@ -1,6 +1,6 @@
 import CommentVotes from "./CommentVotes";
 import CommentBtn from "./CommentBtn";
-import { CommentGroupType, DeleteFlagFnType, EditFlagFnType, ReplyFnType, ScoreFnType, UpdateScoreFnType, VoteFlgFnType } from '../common/Constants'
+import { CommentGroupType, DeleteFlagFnType, EditFlagFnType, ReplyFnType, ScoreFnType, UpdateScoreFnType, VoteFlgFnType } from '../common/constants'
 
 type CommentFooterType = {
   vote: boolean,

@@ -8,15 +8,14 @@ import DeleteModal from "./DeleteModal";
 import CommentVotes from "./CommentVotes";
 import CommentHeader from "./CommentHeader";
 import CommentFooter from "./CommentFooter";
-
 import { commentPostedTime } from "../utils";
-import { CommentGroupType, UpdateScoreFnType, EditCommentFnType, UpdateRepliesFnType, CommentDeleteFnType, UserType} from "../common/Constants";
+import { CommentGroupType, UpdateScoreFnType, EditCommentFnType, UpdateRepliesFnType, CommentDeleteFnType, UserType, URL_INTERACTIVE_COMMENT_ENGINE, currentUser, HEADERS} from "../common/constants";
 import { useLocalStorage } from "../hooks/useLocalStorage";
+import { deleteCommentsFromDb, addNewReplyIntoDb } from "../services/interactivecomment-api";
 
 type CommentType = {
   key: number
   id: number
-  currentUser: UserType
   commentData: CommentGroupType
   updateScore: UpdateScoreFnType
   updateReplies: UpdateRepliesFnType
@@ -27,7 +26,6 @@ type CommentType = {
 const Comment = ({
   key,
   id,
-  currentUser,
   commentData,
   updateScore,
   updateReplies,
@@ -59,6 +57,7 @@ const Comment = ({
       replies.push(newReply)
       updateReplies(replies, commentData.id);
       setReplying(false);
+      addNewReplyIntoDb(newReply, commentData.id);
     }
     
 
@@ -69,11 +68,12 @@ const Comment = ({
     setEditing(false);
   };
 
-  const deleteComment = (id: number|undefined, type: string| undefined) => {
+  const deleteComment = async (id: number|undefined, type: string| undefined) => {
     const finalType = type !== undefined ? type : "comment";
     const finalId = id !== undefined ? id : commentData.id;
     commentDelete(finalId, finalType, commentData.id);
     setDeleting(false);
+    await deleteCommentsFromDb(finalId);
   };
 
   return (
@@ -135,10 +135,9 @@ const Comment = ({
       {replying && (
         <>
         <AddComment
-          currentUser={currentUser}
           buttonValue={"reply"}
           addComments={addReply}
-          replyingTo={commentData.username}
+          replyingTo={commentData.user.username}
         />
         </>
       )}
@@ -146,7 +145,6 @@ const Comment = ({
         <>
           <ReplyContainer
             key={commentData?.replies[0]?.id}
-            currentUser= {currentUser}
             commentData={commentData.replies}
             updateScore={updateScore}
             commentPostedTime={commentPostedTime}
@@ -159,7 +157,7 @@ const Comment = ({
 
       {deleting && (
         <DeleteModal
-          id={key}
+          id={commentData.id}
           isShowDeleteModal= {deleting}
           setDeleting={setDeleting}
           deleteComment={deleteComment}

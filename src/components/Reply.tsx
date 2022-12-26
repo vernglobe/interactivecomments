@@ -8,7 +8,7 @@ import CommentVotes from "./CommentVotes";
 import CommentHeader from "./CommentHeader";
 import CommentFooter from "./CommentFooter";
 import { CommentType, CommentGroupType, UpdateScoreFnType, EditCommentFnType,
-   CommentPostedTimeFnType, AddReplyFnType, UserType } from "../common/Constants";
+   CommentPostedTimeFnType, AddReplyFnType, UserType } from "../common/constants";
 import { useLocalStorage } from "../hooks/useLocalStorage";
 
 type NewReplyFnType = (comment: CommentType) => void
@@ -27,7 +27,6 @@ type ReplyType = {
 }
 
 const Reply = ({
-  currentUser,
   commentData,
   commentPostedTime,
   updateScore,
@@ -64,7 +63,6 @@ const Reply = ({
   const commentContent = () => {
     const text = commentData.content.trim().split(" ");
     const firstWord = text?.shift()?.split(",");
-
     return !editing ? (
       <div className="comment-content">
         <span className="replyingTo">{firstWord}</span>
@@ -142,10 +140,9 @@ const Reply = ({
 
       {replying && (
         <AddComment
-          currentUser={currentUser}
           buttonValue={"reply"}
           addComments={addReply}
-          replyingTo={commentData.username}
+          replyingTo={commentData.user.username}
         />
       )}
 
@@ -162,6 +159,7 @@ const Reply = ({
 
       {deleting && (
         <DeleteModal
+          id={commentData.id}
           isShowDeleteModal = {deleting}
           setDeleting={setDeleting}
           deleteComment={deleteReply}

@@ -1,6 +1,6 @@
 import { ReactComponent as IconPlus } from "../images/icons/icon-plus.svg";
 import { ReactComponent as IconMinus } from "../images/icons/icon-minus.svg";
-import { CommentType, UpdateScoreFnType, VoteFlgFnType, ScoreFnType } from "../common/Constants";
+import { CommentType, UpdateScoreFnType, VoteFlgFnType, ScoreFnType } from "../common/constants";
 
 type CommentVotesType = {
   vote: boolean

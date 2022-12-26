@@ -1,8 +1,7 @@
-import { AddReplyFnType, CommentGroupType, CommentPostedTimeFnType, CommentType, DeleteFnType, EditCommentFnType, UpdateScoreFnType, UserType } from "../common/Constants";
+import { AddReplyFnType, CommentGroupType, CommentPostedTimeFnType, CommentType, DeleteFnType, EditCommentFnType, UpdateScoreFnType, UserType } from "../common/constants";
 import Reply from "./Reply";
 
 type ReplyContainerType = {
-  currentUser: UserType
   commentData: Array<CommentGroupType>
   updateScore: UpdateScoreFnType
   commentPostedTime: CommentPostedTimeFnType
@@ -12,7 +11,6 @@ type ReplyContainerType = {
 }
 
 const ReplyContainer = ({
-  currentUser,
   commentData,
   updateScore,
   commentPostedTime,
@@ -25,7 +23,6 @@ const ReplyContainer = ({
       {commentData.map((data: CommentType) => (
         <Reply
           key={data.id}
-          currentUser={currentUser}
           commentData={data}
           updateScore={updateScore}
           commentPostedTime={commentPostedTime}

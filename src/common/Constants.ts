@@ -27,6 +27,7 @@ export type CommentGroupType = {
   user: UserType
   username?:string
   currentUser?: boolean
+  image?:ImageType
   replies?: Array<CommentType>
 };
 
@@ -44,3 +45,13 @@ export type CommentPostedTimeFnType = (time: number) => string
 export type AddReplyFnType = (newReply: CommentType) => void
 
 export const MIN_WINDOW_WIDTH = 752
+export const HEADERS = {
+  "X-Api-Key": "wzCcUWrTem7mI89tqFojM5rEL8Yn84z46a2iTDx3"
+}
+export const URL_INTERACTIVE_COMMENT_ENGINE = "https://eoh13cdtz4.execute-api.ap-southeast-2.amazonaws.com/prod/comments";
+export const currentUser = {
+  "image": { 
+    "png": "./images/avatars/yoda.png"
+  },
+  "username": "yoda"
+};

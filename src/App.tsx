@@ -1,40 +1,49 @@
-import React, { useState, useEffect } from "react";
+import React, { useEffect } from "react";
 import "./components/Styles/App.scss";
 import Comment from "./components/Comment";
 import AddComment from "./components/AddComment";
-import { CommentGroupType, CommentType } from "./common/Constants";
+import { CommentGroupType, CommentType, currentUser } from "./common/constants";
 import data from './data/data.json'
 import { useLocalStorage } from "./hooks/useLocalStorage";
+import { getAllCommentsFromDb, addCommentsIntoDb, updateCommentsIntoDb } from "./services/interactivecomment-api";
+import Logger from "@vernglobe/logger";
+
+const logger = new Logger("App");
+
+const updateCommentWithCurrentUserAttr = (comments: Array<CommentGroupType>) => {
+  comments.map ( comment => {
+    if (comment.user.username === currentUser.username) {
+      comment.currentUser = true;
+    } else {
+      comment.currentUser = false;
+    }
+    comment.replies?.map (reply => {
+      if (reply.user.username === currentUser.username) {
+        reply.currentUser = true;
+      }
+    })
+  })
+};
 
 const App = () => {
   const [comments, updateComments] = useLocalStorage<CommentGroupType[]>("comments",[]);
 
-  const initialUpdateData = (comment: CommentGroupType | CommentType) => {
-    comment.username = comment.user.username
-    if (comment.user.username !== data.currentUser.username) {
-      comment.currentUser = false
-    } else {
-      comment.currentUser = true
-    }
-  }
   const getData = async () => {
-    //const res = await fetch("./data/data.json");
-    console.log("fetch data here")
-    const sourceData = data
-    sourceData.comments.map((comment: any) => {
-        initialUpdateData(comment)
-        comment.replies?.map((reply: any) => (
-          initialUpdateData(reply)
-        ))
-    })
-    sourceData.comments.sort((a,b) => (a.score > b.score) ? 1 : ((b.score > a.score) ? -1 : 0))
-    updateComments(sourceData.comments);
+    logger.info("retrieve all comments from database");
+    const resp = await getAllCommentsFromDb();
+    const sourceData = resp.data;    
+    if (sourceData.length > 1) {
+      sourceData.sort((a: any,b: any) => (a.score < b.score) ? 1 : -1);
+    }
+    
+    updateComments(sourceData);
   };
 
   useEffect(() => {
     comments !== null && comments.length > 0
       ? updateComments(comments)
       : getData();
+      getData();
   }, []);
 
   useEffect(() => {
@@ -62,11 +71,12 @@ const App = () => {
     updateComments(updatedComments);
   };
 
-  let addComments = (newComment: CommentGroupType) => {
+  let addComments = async (newComment: CommentGroupType) => {
     newComment.currentUser = true
     newComment.user = data.currentUser
     let updatedComments = [...comments, newComment];
     updateComments(updatedComments);
+    await addCommentsIntoDb(newComment);
   };
 
   let updateReplies = (replies: Array<CommentType>, id: number) => {
@@ -79,13 +89,14 @@ const App = () => {
     updateComments(updatedComments);
   };
 
-  let editComment = (content: string, id: number, type: string) => {
+  let editComment = async (content: string, id: number, type: string) => {
     let updatedComments = [...comments];
-
+    let score = 0;
     if (type === "comment") {
       updatedComments.forEach((data) => {
         if (data.id === id) {
           data.content = content;
+          score = data.score;
         }
       });
     } else if (type === "reply") {
@@ -93,12 +104,14 @@ const App = () => {
         comment?.replies?.forEach((data) => {
           if (data.id === id) {
             data.content = content;
+            score = data.score;
           }
         });
       });
     }
 
     updateComments(updatedComments);
+    await updateCommentsIntoDb(id, content, score);
   };
 
 
@@ -120,12 +133,14 @@ const App = () => {
     updateComments(updatedComments);
   };
 
+  updateCommentWithCurrentUserAttr(comments);
+
   return (
     <main className="App">
       {comments.map((comment) => (
        <>
+       {  }
        <Comment
-          currentUser={data.currentUser}
           key={comment.id}
           id={comment.id}
           commentData={comment}
@@ -136,7 +151,7 @@ const App = () => {
         />
        </>
       ))}
-      <AddComment buttonValue={"send"} addComments={addComments} currentUser={data.currentUser}/>
+      <AddComment buttonValue={"send"} addComments={addComments}/>
     </main>
   );
 };
